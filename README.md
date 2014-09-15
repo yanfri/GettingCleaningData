@@ -23,12 +23,13 @@ This repo covers the project assignment and contains:
 Tests
 -----
 ```
-Hello World
+Hello World!
 ```
   
-$x = \frac{3x^2}{\int_{n=1}^N{ln(x+1)dx}}$
+$$ x = \frac{3x^2}{\int_{n=1}^N{ln(x+1)dx}} $$
   
->What can we say about this formula?
+What did they say about this formula?  
+
 >It rocks!
 
 ![alt blabla](https://www.coursera.org//maestro/api/course/972585/logo)
