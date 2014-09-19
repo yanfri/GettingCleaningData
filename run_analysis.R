@@ -18,31 +18,51 @@ ls("smartwear.zip")
 #unzip does not work for me => unzipped manually
 #into data folder './data/UCI HAR Dataset/'
 #set path of training and test sets
-testpath <- "./data/UCI HAR Dataset/test/X_test.txt"
-trainpath <- "./data/UCI HAR Dataset/train/X_train.txt"
+testfile <- "./data/UCI HAR Dataset/test/X_test.txt"
+trainfile <- "./data/UCI HAR Dataset/train/X_train.txt"
 
 #reads the data sets into variables 'testdata' and 'traindata'
-testdata <- read.table(testpath)
-traindata <- read.table(trainpath)
+testdata <- read.table(testfile)
+traindata <- read.table(trainfile)
 
-#check dimensions of training and test sets
+#checks dimensions of training and test sets
 dim(testdata)
 dim(traindata)
 
-#write merged 'dataset' into dataset.txt file
+#writes merged 'dataset' into dataset.txt file
 write.table(dataset, file = "dataset.txt", row.names = FALSE)
 
 checkdataset <- read.table("./data/")
-#merge training and test sets into 'dataset'
+#merges training and test sets into 'dataset'
 dataset <- rbind(traindata, testdata)
 
-#check dimension of 'dataset':
+#checks dimension of 'dataset':
 dim(dataset)
-#check that dimensions of training and test sets add up to dimension of merged 'dataset'
+#checks that dimensions of training and test sets add up to dimension of merged 'dataset'
 dim(traindata)[1]+dim(testdata)[1]-dim(dataset)[1]
 
+#reads labels
+testlabelsfile <- "./data/UCI HAR Dataset/test/y_test.txt"
+trainlabelsfile <- "./data/UCI HAR Dataset/train/y_train.txt"
+
+testlabels <- read.table(testlabelsfile)
+trainlabels <- read.table(trainlabelsfile)
+
+#reads features
+featuresfile <- "./data/UCI HAR Dataset/features.txt"
+features <- read.table(featuresfile)
+features <- features[,2]
+
+#select measures/features containing mean 
+meanselect <- grepl("mean()", features, ignore.case = T, fixed = T)
+stdselect <- grepl("std()", features, ignore.case = T, fixed = T)
 
 
+meanstdSelect <- as.logical(meanselect+stdselect)
+
+featuresSelect <- features[as.logical(meanstdSelect)]
+
+meanstdSelectDataset <- dataset[, meanstdSelect]
 
 
 
