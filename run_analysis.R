@@ -96,5 +96,7 @@ data <- arrange(meanstdSelectDataset, subjects, activity)
 group <- paste("Subject", data[, "subjects"], "-Activity", data[,"activity"], sep = "")
 data <- cbind(group, data)
 
+data <- apply(table(data[,1]), 2, mean)
+
 #writes tidy 'dataset' into dataset.txt file
 write.table(tidydataset, file = "dataset.txt", row.names = FALSE)
