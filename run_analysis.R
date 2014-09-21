@@ -18,16 +18,16 @@ downloadDate <- date()
 #unzip does not work for me => unzipped manually into data folder './data/UCI HAR Dataset/'
 
 #set path of training and test sets
-testfile <- "./data/UCI HAR Dataset/test/X_test.txt"
 trainfile <- "./data/UCI HAR Dataset/train/X_train.txt"
+testfile <- "./data/UCI HAR Dataset/test/X_test.txt"
 
 #read the data sets into variables 'testdata' and 'traindata'
-testdata <- read.table(testfile)
 traindata <- read.table(trainfile)
+testdata <- read.table(testfile)
 
 #check dimensions of training and test sets (for merging purpose)
-dim(testdata)
 dim(traindata)
+dim(testdata)
 
 #merge training and test sets into 'dataset'
 dataset <- rbind(traindata, testdata)
@@ -73,7 +73,23 @@ colLab <- sub("-X", "-in_X_direction", colLab)
 colLab <- sub("-Y", "-in_Y_direction", colLab)
 colLab <- sub("-Z", "-in_Z_direction", colLab)
 
+#assign new labels in 'colLab' to column names of the selected data set
 colnames(meanstdSelectDataset) <- colLab
+
+#read subject ID's from 'subject_train/test.txt' into vectors which are then combined into 'subjects'
+trainSubjects  <- read.table("./data/UCI HAR Dataset/train/subject_train.txt")
+testSubjects <- read.table("./data/UCI HAR Dataset/test/subject_test.txt")
+subjects <- rbind(trainSubjects, testSubjects)
+
+#read activity ID's from 'Y_train/test.txt' files into vectors which are then combined into 'activities'
+trainActivity <- read.table("./data/UCI HAR Dataset/train/Y_train.txt")
+testActivity <- read.table("./data/UCI HAR Dataset/test/Y_test.txt")
+activities <- rbind(trainActivity, testActivity)
+
+#add subject ID's and activity to individual measures
+data <- cbind(subjects, activities, meanstdSelectDataset)
+
+#apply subsetting to measures according to subject ID and activity
 
 
 
