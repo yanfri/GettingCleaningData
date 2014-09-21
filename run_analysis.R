@@ -1,7 +1,7 @@
 #R script for course project (Getting and Cleaning Dat @ Coursera.org)
 setwd("./Sciences/Courses/GettingCleaningData/Project/")
 
-#downloads data sets into data folder
+#download data sets into data folder
 if (!file.exists("data")){
      dir.create("data")
 }
@@ -10,59 +10,75 @@ dataURL <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%2
 download.file(dataURL, destfile = "./data/smartwear.zip")
 downloadDate <- date()
 
-#unzips downloaded file
-gzfile("./data/smartwear.zip")
-unzip("./data/smartwear.zip", unzip = getOption("unzip"))
-ls("smartwear.zip")
+#unzip downloaded file
+#gzfile("./data/smartwear.zip")
+#unzip("./data/smartwear.zip", unzip = getOption("unzip"))
+#ls("smartwear.zip")
 
-#unzip does not work for me => unzipped manually
-#into data folder './data/UCI HAR Dataset/'
+#unzip does not work for me => unzipped manually into data folder './data/UCI HAR Dataset/'
+
 #set path of training and test sets
 testfile <- "./data/UCI HAR Dataset/test/X_test.txt"
 trainfile <- "./data/UCI HAR Dataset/train/X_train.txt"
 
-#reads the data sets into variables 'testdata' and 'traindata'
+#read the data sets into variables 'testdata' and 'traindata'
 testdata <- read.table(testfile)
 traindata <- read.table(trainfile)
 
-#checks dimensions of training and test sets
+#check dimensions of training and test sets (for merging purpose)
 dim(testdata)
 dim(traindata)
 
-#writes merged 'dataset' into dataset.txt file
-write.table(dataset, file = "dataset.txt", row.names = FALSE)
-
-checkdataset <- read.table("./data/")
-#merges training and test sets into 'dataset'
+#merge training and test sets into 'dataset'
 dataset <- rbind(traindata, testdata)
 
-#checks dimension of 'dataset':
+#check dimension of 'dataset':
 dim(dataset)
-#checks that dimensions of training and test sets add up to dimension of merged 'dataset'
+#check that dimensions of training and test sets add up to dimension of merged 'dataset' / formula should equal 0
 dim(traindata)[1]+dim(testdata)[1]-dim(dataset)[1]
 
-#reads labels
-testlabelsfile <- "./data/UCI HAR Dataset/test/y_test.txt"
-trainlabelsfile <- "./data/UCI HAR Dataset/train/y_train.txt"
-
-testlabels <- read.table(testlabelsfile)
-trainlabels <- read.table(trainlabelsfile)
-
-#reads features
+#read features
 featuresfile <- "./data/UCI HAR Dataset/features.txt"
 features <- read.table(featuresfile)
 features <- features[,2]
 
-#select measures/features containing mean 
+#select measures/features containing mean()
 meanselect <- grepl("mean()", features, ignore.case = T, fixed = T)
+
+#select measures/features containing standard deviation (std()) 
 stdselect <- grepl("std()", features, ignore.case = T, fixed = T)
 
-
+#select columns of dataset containing mean or std
 meanstdSelect <- as.logical(meanselect+stdselect)
-
-featuresSelect <- features[as.logical(meanstdSelect)]
 
 meanstdSelectDataset <- dataset[, meanstdSelect]
 
+#select column labels (measuring mean or SD features) from the list of features
+columnLabels <- features[meanstdSelect]
+
+#increase information contained in labels
+colLab <- sub("tB", "timeSignal-B", columnLabels)
+colLab <- sub("tG", "timeSignal-G", colLab)
+colLab <- sub("fB", "frequencySignal-B", colLab)
+colLab <- sub("BodyAccJerk", "Jerk-", colLab)
+colLab <- sub("BodyAcc", "BodyAcceleration-", colLab)
+colLab <- sub("BodyGyro", "BodyAngularVelocity-", colLab)
+colLab <- sub("GravityAcc", "GravityAcceleration", colLab)
+colLab <- sub("Mag", "Magnitude", colLab)
+colLab <- gsub("mean", "Average", colLab)
+colLab <- gsub("std", "StandardDeviation", colLab)
+colLab <- sub("\\()", "", colLab)
+colLab <- sub("--", "-", colLab)
+colLab <- sub("-X", "-in_X_direction", colLab)
+colLab <- sub("-Y", "-in_Y_direction", colLab)
+colLab <- sub("-Z", "-in_Z_direction", colLab)
+
+colnames(meanstdSelectDataset) <- colLab
 
 
+
+
+
+
+#writes tidy 'dataset' into dataset.txt file
+write.table(tidydataset, file = "dataset.txt", row.names = FALSE)
