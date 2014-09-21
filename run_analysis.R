@@ -78,7 +78,5 @@ colnames(meanstdSelectDataset) <- colLab
 
 
 
-
-
 #writes tidy 'dataset' into dataset.txt file
 write.table(tidydataset, file = "dataset.txt", row.names = FALSE)
