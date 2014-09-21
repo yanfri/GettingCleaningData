@@ -87,12 +87,14 @@ testActivity <- read.table("./data/UCI HAR Dataset/test/Y_test.txt")
 activities <- rbind(trainActivity, testActivity)
 
 #add subject ID's and activity to individual measures
-data <- cbind(subjects, activities, meanstdSelectDataset)
+meanstdSelectDataset$subjects <- subjects
+meanstdSelectDataset$activity <- activities
 
 #apply subsetting to measures according to subject ID and activity
-
-
-
+library(plyr)
+data <- arrange(meanstdSelectDataset, subjects, activity)
+group <- paste("Subject", data[, "subjects"], "-Activity", data[,"activity"], sep = "")
+data <- cbind(group, data)
 
 #writes tidy 'dataset' into dataset.txt file
 write.table(tidydataset, file = "dataset.txt", row.names = FALSE)
